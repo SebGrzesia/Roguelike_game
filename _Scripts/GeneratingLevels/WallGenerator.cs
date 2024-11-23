@@ -8,9 +8,50 @@ public static class WallGenerator
     public static void CreateWalls(HashSet<Vector2Int> floorPosition, TilemapVisualizer tilemapVisualizer)
     {
         var basicWallPositions = FindWallsInDirection(floorPosition, Direction2D.cardinalDirectionsList);
+        var corrnerWallPositions = FindWallsInDirection(floorPosition, Direction2D.diagonalDirectionsList);
+        CreateBasicWall(tilemapVisualizer, basicWallPositions, floorPosition);
+        CreateCornerWalls(tilemapVisualizer, basicWallPositions, floorPosition);
+    }
+
+    private static void CreateCornerWalls(TilemapVisualizer tilemapVisualizer, HashSet<Vector2Int> corrnerWallPositions, HashSet<Vector2Int> floorPosition)
+    {
+        foreach (var position in corrnerWallPositions)
+        {
+            string neighboursBinaryType = "";
+            foreach ( var direction in Direction2D.eightDirectionsList)
+            {
+                var neighbourPosition = position + direction;
+                if ( floorPosition.Contains(neighbourPosition))
+                {
+                    neighboursBinaryType += "1";
+                }
+                else
+                {
+                    neighboursBinaryType += "0";
+                }
+            }
+            tilemapVisualizer.PaintSingleCornerWall(position, neighboursBinaryType);
+        }
+    }
+
+    private static void CreateBasicWall(TilemapVisualizer tilemapVisualizer, HashSet<Vector2Int> basicWallPositions, HashSet<Vector2Int> floorPosition)
+    {
         foreach (var position in basicWallPositions)
         {
-            tilemapVisualizer.PaintSignleBasicWall(position);
+            string neighboursBinaryType = "";
+            foreach (var direction in Direction2D.cardinalDirectionsList)
+            {
+                var neighbourPosition = position + direction;
+                if ( floorPosition.Contains(neighbourPosition) )
+                {
+                    neighboursBinaryType += "1";
+                }
+                else
+                {
+                    neighboursBinaryType += "0";
+                }
+            }
+            tilemapVisualizer.PaintSignleBasicWall(position, neighboursBinaryType);
         }
     }
 
